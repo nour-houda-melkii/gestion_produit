@@ -1,0 +1,110 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block body %}
+    <div style="padding-top: 5%; padding-left: 20%;">
+
+        <h1>Produit index</h1>
+
+        <!-- Tableau avec ombre pour chaque ligne -->
+        <table class="table" style="border-collapse: collapse; width: 100%;">
+
+            <thead>
+                <tr style="background-color: #f2f2f2;">
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Image</th>
+                    <th>Quantity</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+            {% for produit in produits %}
+                <tr style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <td>{{ produit.id }}</td>
+                    <td>{{ produit.name }}</td>
+                    <td>{{ produit.desciption }}</td>
+                    <td>{{ produit.price }}</td>
+                    <td>   <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-thumbnail" style="max-width: 150px;"></td>
+                    <td>{{ produit.quantity }}</td>
+                    <td>
+                        <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
+                        <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">no records found</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="text-align: center; margin-top: 20px;">
+            <a href="{{ path('app_produit_new') }}" class="create-new">Create new</a>
+        </div>
+    </div>
+{% endblock %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+        .table {
+            margin-top: 20px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .table th {
+            background-color:rgb(130, 178, 226);
+            color: #fff;
+        }
+        .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .table tr:hover {
+            background-color: #e9ecef;
+        }
+        .table a {
+            color:rgb(103, 154, 208);
+            text-decoration: none;
+        }
+        .table a:hover {
+            text-decoration: underline;
+        }
+        .table td:last-child {
+            display: flex;
+            gap: 10px;
+        }
+        .table td:last-child a {
+            padding: 5px 10px;
+            border: 1px solidrgb(120, 163, 210);
+            border-radius: 3px;
+        }
+        .table td:last-child a:hover {
+            background-color:rgb(115, 161, 212);
+            color: #fff;
+        }
+        .create-new {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .create-new:hover {
+            background-color: #218838;
+        }
+    </style>
+{% endblock %}
