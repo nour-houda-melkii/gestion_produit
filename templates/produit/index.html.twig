@@ -30,7 +30,7 @@
                     <td>   <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-thumbnail" style="max-width: 150px;"></td>
                     <td>{{ produit.quantity }}</td>
                     <td>
-                        <a href="{{ path('app_produit_show', {'id': produit.id}) }}">show</a>
+                        <a href="{{ path('app_produit_show_back', {'id': produit.id}) }}">show</a>
                         <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
                     </td>
                 </tr>

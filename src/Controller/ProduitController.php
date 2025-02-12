@@ -52,16 +52,25 @@ final class ProduitController extends AbstractController
             }
             
             // Contrôle de saisie pour le prix
-            $prix = $produit->getPrice();
-            if ($prix < 0.50 || $prix > 10000) {
-                $this->addFlash('error', 'Le prix doit être compris entre 0,50€ et 10 000€');
-                return $this->redirectToRoute('app_produit_new');
-            }
+            if ($form->isSubmitted() && $form->isValid()) {
+    $prix = $produit->getPrice();
+    
+    if ($prix < 0) {
+        $this->addFlash('error', 'Le prix ne peut pas être négatif.');
+        return $this->redirectToRoute('app_produit_new');
+    }
 
-            $entityManager->persist($produit);
-            $entityManager->flush();
+    if ($prix < 0.50 || $prix > 10000) {
+        $this->addFlash('error', 'Le prix doit être compris entre 0,50 DT et 10000 DT.');
+        return $this->redirectToRoute('app_produit_new');
+    }
 
-            return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
+    $entityManager->persist($produit);
+    $entityManager->flush();
+
+    return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
+}
+
         }
 
         return $this->render('produit/new.html.twig', [
@@ -70,7 +79,7 @@ final class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_produit_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_produit_show_back', methods: ['GET'])]
     public function show(Produit $produit): Response
     {
         return $this->render('produit/show.html.twig', [
@@ -88,7 +97,7 @@ final class ProduitController extends AbstractController
             // Contrôle de saisie pour le prix
             $prix = $produit->getPrice();
             if ($prix < 0.50 || $prix > 1000) {
-                $this->addFlash('error', 'Le prix doit être compris entre 0,50DT et 10 000DT');
+                $this->addFlash('error', 'Le prix doit être compris entre 0,50DT et 1000 DT');
                 return $this->redirectToRoute('app_produit_edit', ['id' => $produit->getId()]);
             }
 
