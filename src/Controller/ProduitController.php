@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Controller;
-
 use App\Entity\Produit;
 use App\Form\ProduitType;
 use App\Repository\ProduitRepository;
@@ -124,12 +123,14 @@ final class ProduitController extends AbstractController
 
     }
 
-    #[Route('/front', name: 'app_produit_show', methods: ['GET'])]
+    #[Route('/front', name: 'app_produit_show', methods: ['GET', 'POST'])]
     public function showproduitfront(ProduitRepository $produitRepository): Response
     {
         $produits = $produitRepository->findAll();
-        return $this->render('produit/indexClient.html.twig', [
+        return $this->render('produit/indexClient.html.twig',
+         [
             'produits' => $produits,
-        ]);
+        ]
+    );
     }
 }
