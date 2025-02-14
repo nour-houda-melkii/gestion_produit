@@ -22,6 +22,7 @@ final class ProduitController extends AbstractController
         ]);
     }
 
+
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -30,46 +31,10 @@ final class ProduitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $imageFile = $form->get('image')->getData();
+            $entityManager->persist($produit);
+            $entityManager->flush();
 
-            if ($imageFile) {
-                // Generate a unique name for the file
-                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
-
-                try {
-                    // Move the file to the configured directory (ensure the directory exists)
-                    $imageFile->move(
-                        $this->getParameter('images_directory'),  // Defined in services.yaml
-                        $newFilename
-                    );
-
-                    // Store only the filename in the database
-                    $produit->setImage($newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('error', 'Erreur lors de l\'enregistrement de l\'image.');
-                }
-            }
-            
-            // Contrôle de saisie pour le prix
-            if ($form->isSubmitted() && $form->isValid()) {
-    $prix = $produit->getPrice();
-    
-    if ($prix < 0) {
-        $this->addFlash('error', 'Le prix ne peut pas être négatif.');
-        return $this->redirectToRoute('app_produit_new');
-    }
-
-    if ($prix < 0.50 || $prix > 10000) {
-        $this->addFlash('error', 'Le prix doit être compris entre 0,50 DT et 10000 DT.');
-        return $this->redirectToRoute('app_produit_new');
-    }
-
-    $entityManager->persist($produit);
-    $entityManager->flush();
-
-    return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
-}
-
+            return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('produit/new.html.twig', [
@@ -78,8 +43,17 @@ final class ProduitController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_produit_show_back', methods: ['GET'])]
-    public function show(Produit $produit): Response
+    #[Route('/front', name: 'app_produit_show', methods: ['GET'])]
+    public function showproduitfront(ProduitRepository $produitRepository): Response
+    {
+        $produits = $produitRepository->findAll();
+    return $this->render('produit/indexClient.html.twig', [
+        'produits' => $produits,
+    ]);
+}
+
+#[Route('/{id}', name: 'app_produit_show_back', methods: ['GET'])]
+public function show(Produit $produit): Response
     {
         return $this->render('produit/show.html.twig', [
             'produit' => $produit,
@@ -123,8 +97,8 @@ final class ProduitController extends AbstractController
 
     }
 
-    #[Route('/front', name: 'app_produit_show', methods: ['GET', 'POST'])]
-    public function showproduitfront(ProduitRepository $produitRepository): Response
+    #[Route('/front', name: 'app_produit_display_front', methods: ['GET', 'POST'])]
+    public function displayFront(ProduitRepository $produitRepository): Response
     {
         $produits = $produitRepository->findAll();
         return $this->render('produit/indexClient.html.twig',
