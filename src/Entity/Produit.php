@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ProduitRepository::class)]
 class Produit
 {
+    
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -100,7 +101,7 @@ class Produit
 
         return $this;
     }
-
+    
     public function getCategory(): ?Category
     {
         return $this->Category;

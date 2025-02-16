@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use App\Repository\CategoryRepository;
 
 #[Route('/produit')]
 final class ProduitController extends AbstractController
@@ -96,15 +97,7 @@ public function show(Produit $produit): Response
         return $this->redirectToRoute('app_produit_index', [], Response::HTTP_SEE_OTHER);
 
     }
+    
 
-    #[Route('/front', name: 'app_produit_display_front', methods: ['GET', 'POST'])]
-    public function displayFront(ProduitRepository $produitRepository): Response
-    {
-        $produits = $produitRepository->findAll();
-        return $this->render('produit/indexClient.html.twig',
-         [
-            'produits' => $produits,
-        ]
-    );
-    }
+  
 }
