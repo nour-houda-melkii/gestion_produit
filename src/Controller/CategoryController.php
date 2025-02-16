@@ -10,6 +10,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\Common\Collections\Collection;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 #[Route('/category')]
 final class CategoryController extends AbstractController
@@ -80,16 +82,35 @@ final class CategoryController extends AbstractController
             'category' => $category,
             'form' => $form,
         ]);
-    }
-
-    #[Route('/{id}', name: 'app_category_delete', methods: ['POST'])]
-    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$category->getId(), $request->get('_token'))) {
-            $entityManager->remove($category);
-            $entityManager->flush();
-        }
-
         return $this->redirectToRoute('app_category_index', [], Response::HTTP_SEE_OTHER);
+
+    }
+    
+
+   
+
+  
+    #[Route('/delete/{id}', name: 'categorie_produit_delete', methods: ['POST'])]
+    public function delete(Request $request, Category $category, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // Vérifier le token CSRF
+        $data = json_decode($request->getContent(), true);
+        if (!$this->isCsrfTokenValid('delete' . $category->getId(), $data['_token'] ?? '')) {
+            return new JsonResponse(['success' => false, 'message' => 'Token CSRF invalide.'], Response::HTTP_BAD_REQUEST);
+        }
+    
+        // Vérifier si la catégorie contient des produits
+        if (!$category->getProduits()->isEmpty()) {
+            return new JsonResponse(['success' => false, 'message' => 'Unable to delete a category containing Products.']);
+        }
+    
+        // Supprimer la catégorie
+        $entityManager->remove($category);
+        $entityManager->flush();
+        
+    
+        return new JsonResponse(['success' => true]);
+        
+
     }
 }
