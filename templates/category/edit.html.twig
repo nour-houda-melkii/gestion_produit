@@ -43,14 +43,14 @@
             const id = this.getAttribute('data-id');
 
             Swal.fire({
-                title: 'Confirme the deletion',
+                title: 'Confirm the deletion',
                 text: 'Are you sure you want to delete this category? This action is irreversible.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete',
-                cancelButtonText: 'Annuler'
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(`/category/delete/${id}`, {

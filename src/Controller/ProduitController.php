@@ -32,6 +32,22 @@ final class ProduitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('image')->getData();
+            if ($file) {
+                $filename = md5(uniqid()) . '.' . $file->guessExtension();
+
+                try {
+                    $file->move(
+                        $this->getParameter('images_directory'),  // Directory defined in parameters
+                        $filename
+                    );
+                    $produit->setImage($filename);
+                } catch (\Exception $e) {
+                    // Handle the exception if something goes wrong
+                    $this->addFlash('error', 'Failed to upload image.');
+                }
+            }
+
             $entityManager->persist($produit);
             $entityManager->flush();
 
