@@ -1,111 +1,105 @@
 {% extends 'baseBackOffice.html.twig' %}
 
 {% block body %}
-    <div style="padding-top: 5%; padding-left: 20%;">
+    <div class="container-fluid" style="padding-top: 5%; padding-left: 5%; padding-right: 5%;">
+        <h1 class="mb-4">Product Management</h1>
 
-        <h1>Produit index</h1>
+        <!-- Table with improved styling -->
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered shadow-sm">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produit in produits %}
+                        <tr>
+                            <td>{{ produit.id }}</td>
+                            <td>{{ produit.name }}</td>
+                            <td>{{ produit.desciption }}</td>
+                            <td>${{ produit.price|number_format(2) }}</td>
+                            <td>
+                                <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-fluid rounded" style="max-width: 100px;">
+                            </td>
+                            <td>{{ produit.quantity }}</td>
+                            <td>
+                                <a href="{{ path('app_produit_show_back', {'id': produit.id}) }}" class="btn btn-info btn-sm">View</a>
+                               
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">No records found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
 
-        <!-- Tableau avec ombre pour chaque ligne -->
-        <table class="table" style="border-collapse: collapse; width: 100%;">
-
-            <thead>
-                <tr style="background-color: #f2f2f2;">
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Price</th>
-                    <th>Image</th>
-                    <th>Quantity</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            
-            <tbody>
-            {% for produit in produits %}
-                <tr style="box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
-                    <td>{{ produit.id }}</td>
-                    <td>{{ produit.name }}</td>
-                    <td>{{ produit.desciption }}</td>
-                    <td>{{ produit.price }}</td>
-                    <td>   <img src="{{ asset('uploads/images/' ~ produit.image) }}" alt="Product Image" class="img-thumbnail" style="max-width: 150px;"></td>
-                    <td>{{ produit.quantity }}</td>
-                    <td>
-                        <a href="{{ path('app_produit_show_back', {'id': produit.id}) }}">show</a>
-                        <a href="{{ path('app_produit_edit', {'id': produit.id}) }}">edit</a>
-                    </td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="7">no records found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <div style="text-align: center; margin-top: 20px;">
-            <a href="{{ path('app_produit_new') }}" class="create-new">Create new</a>
-            
+        <!-- Create new button -->
+        <div class="text-center mt-4">
+            <a href="{{ path('app_produit_new') }}" class="btn btn-success btn-lg">Create New Product</a>
         </div>
     </div>
 {% endblock %}
+
 {% block stylesheets %}
     {{ parent() }}
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
         }
-        .table {
-            margin-top: 20px;
-            border: 1px solid #dee2e6;
-            border-radius: 5px;
-            overflow: hidden;
+        h1 {
+            color: #343a40;
+            font-weight: bold;
         }
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
+        .table {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         .table th {
-            background-color:rgb(130, 178, 226);
+            background-color: #007bff;
             color: #fff;
+            font-weight: bold;
+            text-align: center;
         }
-        .table tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .table td {
+            vertical-align: middle;
+            text-align: center;
         }
-        .table tr:hover {
-            background-color: #e9ecef;
+        .table td img {
+            transition: transform 0.3s ease;
         }
-        .table a {
-            color:rgb(103, 154, 208);
-            text-decoration: none;
+        .table td img:hover {
+            transform: scale(1.1);
         }
-        .table a:hover {
-            text-decoration: underline;
+        .btn-info, .btn-warning, .btn-success {
+            transition: all 0.3s ease;
         }
-        .table td:last-child {
-            display: flex;
-            gap: 10px;
+        .btn-info:hover {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
         }
-        .table td:last-child a {
-            padding: 5px 10px;
-            border: 1px solidrgb(120, 163, 210);
-            border-radius: 3px;
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #e0a800;
         }
-        .table td:last-child a:hover {
-            background-color:rgb(115, 161, 212);
-            color: #fff;
-        }
-        .create-new {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        .create-new:hover {
+        .btn-success:hover {
             background-color: #218838;
+            border-color: #218838;
+        }
+        .text-muted {
+            font-style: italic;
         }
     </style>
 {% endblock %}
