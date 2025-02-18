@@ -32,7 +32,7 @@
       <a href="{{ path('app_category_index') }}" class="btn btn-outline-secondary fw-bold">
         <i class="fas fa-arrow-left"></i> Back to List
       </a>
-
+       
       <button class="btn btn-danger delete-category" data-id="{{ category.id }}">Delete</button>
     </div>
   </div>
@@ -43,14 +43,14 @@
             const id = this.getAttribute('data-id');
 
             Swal.fire({
-                title: 'Confirme the deletion',
+                title: 'Confirm the deletion',
                 text: 'Are you sure you want to delete this category? This action is irreversible.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Yes, delete',
-                cancelButtonText: 'Annuler'
+                cancelButtonText: 'Cancel'
             }).then((result) => {
                 if (result.isConfirmed) {
                     fetch(`/category/delete/${id}`, {
@@ -71,7 +71,7 @@
                                 'Category was successfully removed.',
                                 'success'
                             );
-                          button.closest('.container').remove();
+                          window.location.href = '{{ path('app_category_index') }}';
                         } else {
                             Swal.fire(
                                 'Error',
@@ -92,5 +92,5 @@
             });
         });
     });
-  </script>
+  </script> 
 {% endblock %}

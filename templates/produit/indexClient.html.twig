@@ -19,7 +19,65 @@
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700;800;900&amp;display=swap"
     rel="stylesheet">
-  {% endblock %} {# Fin du bloc stylesheets #}
+  <style>
+    /* Custom Styles for Product Cards */
+    .card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: none;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-img-top {
+      width: 100%;
+      height: 100%;
+      border: 5px solid #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #333;
+    }
+
+    .card-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 0.5rem;
+    }
+
+    .text-warning {
+      color: #ffc107 !important;
+      font-weight: 500;
+    }
+
+    .btn-outline-primary {
+      border-color: #007bff;
+      color: #007bff;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      font-weight: 500;
+    }
+
+    .btn-outline-primary:hover {
+      background-color: #007bff;
+      color: #fff;
+    }
+  </style>
+  {% endblock %}
 
   {% block javascripts %}
   <script src="{{ asset('assetsFrontOffice/js/modernizr.js') }}"></script>
@@ -33,6 +91,7 @@
 <body data-bs-spy="scroll" data-bs-target="#header-nav" tabindex="0">
 
   {% block header %}
+  <!-- Your existing navigation bar -->
   <header id="header">
     <nav class="header-top">
       <div class="container">
@@ -146,6 +205,21 @@
   {% block body %}
   <section id="products" class="py-5">
     <div class="container">
+              <!-- Filter by Category -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <form method="get" action="{{ path('front_list') }}" class="d-flex">
+                <select name="category" class="form-select me-2">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {{ selectedCategory == category.id ? 'selected' : '' }}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-secondary btn-sm">Filter</button>
+            </form>
+
+        </div>
       <div class="row">
         {% for produit in produits %}
         <div class="col-md-4 mb-4">
@@ -159,6 +233,7 @@
               {% if produit.quantity < 3 %}
               <p class="card-text text-warning"><strong>Alert: This product may be out of stock soon!</strong></p>
               {% endif %}
+              <a href="#" class="btn btn-outline-primary">Add to Cart</a>
             </div>
           </div>
         </div>
@@ -173,89 +248,8 @@
   {% endblock %}
 
   {% block footer %}
-  <footer id="footer" class="overflow-hidden padding-large pb-0">
-    <div class="container">
-      <div class="row d-flex flex-wrap justify-content-between">
-        <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
-          <div class="footer-menu">
-            <img src={{ asset('assetsFrontOffice/images/logo.svg')}} alt="logo"  width="150">
-        
-            <div class="contact-item">
-              <p>
-                <svg class="location primary-color" width="25" height="25">
-                  <use xlink:href="#location"></use>
-                </svg>
-                <span>123 Arling, Miola, NY</span>
-              </p>
-              <p>
-                <svg class="email primary-color" width="25" height="25">
-                  <use xlink:href="#email"></use>
-                </svg>
-                <a href="mailto:">Info@yourinfo.com</a>
-              </p>
-              <p>
-                <svg class="phone primary-color" width="25" height="25">
-                  <use xlink:href="#phone"></use>
-                </svg>
-                <span>(+487) 384 9452</span>
-              </p>
-              <ul class="social-links list-unstyled d-flex mt-3">
-                <li>
-                  <a href="#">
-                    <svg class="facebook text-primary-500 me-3" width="25" height="25">
-                      <use xlink:href="#facebook"></use>
-                    </svg>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <svg class="twitter text-primary-500 me-3" width="25" height="25">
-                      <use xlink:href="#twitter"></use>
-                    </svg>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <svg class="instagram text-primary-500 me-3" width="25" height="25">
-                      <use xlink:href="#instagram"></use>
-                    </svg>
-                  </a>
-                </li>
-                <li>
-                    <a href="#">
-                    <svg class="youtube text-primary-500 me-3" width="25" height="25">
-                      <use xlink:href="#youtube"></use>
-                    </svg>
-                    </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <svg class="linkedin text-primary-500" width="25" height="25">
-                      <use xlink:href="#linkedin"></use>
-                    </svg>
-                  </a>
-                </li>
-              </ul>
-
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
-          <div class="footer-menu">
-          
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-6 pb-3">
-          <div class="footer-menu">
-          
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </footer>
+  <!-- Your existing footer -->
   {% endblock %}
 </body>
+
 </html>

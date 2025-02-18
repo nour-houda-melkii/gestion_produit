@@ -9,12 +9,35 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use App\Repository\CategoryRepository;
+use App\Entity\Category;
 
 #[Route('/produit')]
-final class ProduitController extends AbstractController
+class ProduitController extends AbstractController
 {
+    #[Route('/front', name: 'front_list', methods: ['GET'])]
+    public function listProducts(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $categoryId = $request->query->get('category');
+        $produitRepository = $doctrine->getRepository(Produit::class);
+        $categoryRepository = $doctrine->getRepository(Category::class);
+
+        if ($categoryId) {
+            $category = $categoryRepository->find($categoryId);
+            $produits = $produitRepository->findBy(['Category' => $category]);
+        } else {
+            $produits = $produitRepository->findAll();
+        }
+
+        return $this->render('produit/indexClient.html.twig', [
+            'produits' => $produits,
+            'categories' => $categoryRepository->findAll(),
+            'selectedCategory' => $categoryId
+        ]);
+    }
+
     #[Route(name: 'app_produit_index', methods: ['GET'])]
     public function index(ProduitRepository $produitRepository): Response
     {
@@ -22,7 +45,6 @@ final class ProduitController extends AbstractController
             'produits' => $produitRepository->findAll(),
         ]);
     }
-
 
     #[Route('/new', name: 'app_produit_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
@@ -32,6 +54,22 @@ final class ProduitController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $file = $form->get('image')->getData();
+            if ($file) {
+                $filename = md5(uniqid()) . '.' . $file->guessExtension();
+
+                try {
+                    $file->move(
+                        $this->getParameter('images_directory'),  // Directory defined in parameters
+                        $filename
+                    );
+                    $produit->setImage($filename);
+                } catch (\Exception $e) {
+                    // Handle the exception if something goes wrong
+                    $this->addFlash('error', 'Failed to upload image.');
+                }
+            }
+
             $entityManager->persist($produit);
             $entityManager->flush();
 
