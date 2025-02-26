@@ -1,0 +1,188 @@
+{% extends 'baseBackOffice.html.twig' %}
+
+{% block title %}Liste des Médecins - SAHATECK{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .table th {
+            color:rgb(31, 31, 34);
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .table td {
+            font-weight: 400;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .table {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        p {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            font-size: 13px;
+        }
+
+        .btn-add {
+            margin-bottom: 15px;
+            background-color: #00B4D8;
+            color: white;
+            border: none;
+            font-weight: 500;
+            padding: 10px 20px;
+            display: inline-block;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn-add:hover {
+            background-color: #90E0E6;
+        }
+
+        .search-bar {
+            margin-bottom: 15px;
+            width: 400px;
+            position: relative;
+        }
+
+        .search-bar input {
+            padding-left: 30px;
+            padding-right: 30px;
+            width: 100%;
+        }
+
+        .search-bar .bi-search {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+        }
+
+        .search-bar input::placeholder {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 200;
+            font-size: 13px;
+            color: #6c757d;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+  <main id="main" class="main">
+    <section class="section">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Liste des Médecins</h5>
+              <p>Retrouvez ici la liste complète des médecins enregistrés dans notre système. Vous pouvez consulter leurs informations, les modifier ou les supprimer si nécessaire.</p>
+
+              <!-- Ajout du bouton Ajouter un médecin -->
+              <div class="d-flex justify-content-between mb-4">
+                <!-- Formulaire de recherche -->
+                <div class="search-bar">
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher un médecin" value="{{ app.request.get('search') }}">
+                    <i class="bi bi-search"></i>
+                </div>
+                <a href="{{ path('app_new_register_medecin') }}" class="btn btn-success btn-sm btn-add">
+                    + Ajouter un Médecin
+                </a>
+              </div>
+
+              <!-- Table with stripped rows -->
+              <div class="container-fluid mt-4">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Prénom</th>
+                                <th>Email</th>
+                                <th>Adresse</th>
+                                <th>Téléphone</th>
+                                <th>Spécialité</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for medecin in medecins %}
+                                <tr>
+                                    <td>{{ medecin.lastName ? medecin.lastName : 'Non spécifié' }}</td>
+                                    <td>{{ medecin.firstName ? medecin.firstName : 'Non spécifié' }}</td>
+                                    <td>{{ medecin.email ? medecin.email : 'Non spécifié' }}</td>
+                                    <td>{{ medecin.adress ? medecin.adress : 'Non spécifié' }}</td>
+                                    <td>{{ medecin.phoneNumber ? medecin.phoneNumber : 'Non spécifié' }}</td>
+                                    <td>
+                                        {% if medecin.specialite is defined and medecin.specialite is not null %}
+                                            {{ medecin.specialite.value }}
+                                        {% else %}
+                                            Non spécifié
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <!-- Bouton Voir -->
+                                        <a href="{{ path('app_medecin_show', {'id': medecin.id}) }}" class="btn btn-info btn-sm" title="Voir">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <!-- Bouton Modifier -->
+                                        <a href="{{ path('app_medecin_edit', {'id': medecin.id}) }}" class="btn btn-warning btn-sm" title="Modifier">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <!-- Bouton Supprimer -->
+                                        <form method="post" action="{{ path('app_medecin_delete', {'id': medecin.id}) }}" class="delete-form d-inline">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ medecin.id) }}">
+                                            <button type="submit" class="btn btn-danger btn-sm" title="Supprimer">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center">Aucun médecin trouvé.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.delete-form').forEach(form => {
+                form.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    Swal.fire({
+                        text: "Êtes-vous sûr de vouloir supprimer ce médecin ?",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#00B4D8',
+                        confirmButtonText: 'Oui, supprimer !',
+                        cancelButtonText: 'Annuler'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+{% endblock %}

@@ -1100,4 +1100,10 @@ button.filter-button.gallery-btn:hover {
   --------------------------------------------------------------*/
 span.price-tick {
   color: var(--primary-color);
+ 
+}
+
+li::marker {
+  content: none;
+  display: none;
 }

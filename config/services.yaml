@@ -5,6 +5,9 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images'
+    affiches_directory: '%kernel.project_dir%/public/uploads/affiches'
+    zerobounce_api_key: '0e9729a15e59479395647c174721e728'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -19,6 +22,23 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Tests/'
+
+    # Configuration explicite pour le service FileUploader
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%kernel.project_dir%/public/uploads'
+            $slugger: '@Symfony\Component\String\Slugger\SluggerInterface'
+
+    App\Service\EmailService:
+        arguments:
+            $mailer: '@mailer'
+
+    App\Service\EmailValidatorService: ~
+    
+    App\Service\ZeroBounceEmailValidator:
+        arguments:
+            $zeroBounceApiKey: '%zerobounce_api_key%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

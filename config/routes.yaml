@@ -3,3 +3,12 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+produit_search:
+  path: /produit/search
+  controller: App\Controller\ProduitController::search
+  methods: GET
+remove_from_cart:
+    path: /cart/remove/{id}
+    controller: App\Controller\CartController::removeFromCart
+    methods: DELETE

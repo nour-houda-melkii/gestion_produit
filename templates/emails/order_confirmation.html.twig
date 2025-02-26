@@ -1,0 +1,28 @@
+{# templates/emails/order_confirmation.html.twig #}
+
+<h1>Order Confirmation</h1>
+<p>Dear {{ user.firstName }} {{ user.lastName }},</p>
+<p>Your order has been confirmed. Here are the details:</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for ligne in commande.commandeLignes %}
+            <tr>
+                <td>{{ ligne.produit.name }}</td>
+                <td>{{ ligne.quantity }}</td>
+                <td>{{ ligne.produit.price }} Dt</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p>Total: {{ commande.total }} Dt</p>
+
+<p>Thank you for shopping with us!</p>
